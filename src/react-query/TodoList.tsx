@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useQuery as ReactQueryUseQuery } from "@tanstack/react-query";
 
 interface Todo {
   id: number;
@@ -9,33 +9,26 @@ interface Todo {
 }
 
 const TodoList = () => {
+  const fetchTodos = () =>
+    axios
+      .get<Todo[]>("https://jsonplaceholder.typicode.com/todos")
+      .then((res) => res.data);
+  // here get returns a promise or an object containing data, but we want to store actual data in cache so we use '.then' in this case.
 
   // below we gave a new name to our 'data' which is 'todos'
-  const { data: todos } = useQuery({
-    queryKey: ['todos'],
-    queryFn: () => {
-      axios
-        .get<Todo[]>("https://jsonplaceholder.typicode.com/todos")
-        .then((res) => res.data);
-
-      // here get returns a promise or an object containing data, but we want to store actual data in cache so we use '.then' in this case.
-    },
+  const { data: todos, error } = ReactQueryUseQuery<Todo[], Error>({
+    queryKey: ["todos"],
+    queryFn: () =>
+    axios
+      .get<Todo[]>("https://jsonplaceholder.typicode.com/todos")
+      .then((res) => res.data),
   });
 
-  // const [todos, setTodos] = useState<Todo[]>([]);
-  // const [error, setError] = useState("");
-
-  // useEffect(() => {
-  //   axios
-  //     .get("https://jsonplaceholder.typicode.com/todos")
-  //     .then((res) => setTodos(res.data))
-  //     .catch((error) => setError(error));
-  // }, []);
-
-  // if (error) return <p>{error}</p>;
+  if (error) return <p>{error.message}</p>;
 
   return (
     <ul className="list-group">
+      {/* we applied '?' below because todos might be empty in some cases */}
       {todos?.map((todo) => (
         <li key={todo.id} className="list-group-item">
           {todo.title}
