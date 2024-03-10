@@ -1,28 +1,13 @@
 import axios from "axios";
 import { useQuery as ReactQueryUseQuery } from "@tanstack/react-query";
+import useTodos from "./Hooks/useTodos";
 
-interface Todo {
-  id: number;
-  title: string;
-  userId: number;
-  completed: boolean;
-}
+
 
 const TodoList = () => {
-  const fetchTodos = () =>
-    axios
-      .get<Todo[]>("https://jsonplaceholder.typicode.com/todos")
-      .then((res) => res.data);
-  // here get returns a promise or an object containing data, but we want to store actual data in cache so we use '.then' in this case.
-
-  // below we gave a new name to our 'data' which is 'todos'
-  const { data: todos, error, isLoading } = ReactQueryUseQuery<Todo[], Error>({
-    queryKey: ["todos"],
-    queryFn: () =>
-    axios
-      .get<Todo[]>("https://jsonplaceholder.typicode.com/todos")
-      .then((res) => res.data),
-  });
+  
+  
+  const { data: todos, error, isLoading } = useTodos();
 
   if(isLoading) return <p>Loading...</p>;
 
