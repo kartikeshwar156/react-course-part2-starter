@@ -1,5 +1,3 @@
-import axios from "axios";
-import { useQuery as ReactQueryUseQuery } from "@tanstack/react-query";
 import useTodos from "./Hooks/useTodos";
 
 
